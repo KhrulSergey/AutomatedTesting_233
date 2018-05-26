@@ -76,7 +76,7 @@ class test_add_group(unittest.TestCase):
         wd.find_element_by_xpath("//form[@id='LoginForm']/input[3]").click()
 
     def open_home_page(self, wd):
-        # open home page
+        # open home_phone page
         wd.get("http://localhost/addressbook/")
 
     def tearDown(self):
