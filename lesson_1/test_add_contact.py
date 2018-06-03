@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.firefox.webdriver import WebDriver
 import unittest
-from Models.contact import Contact
+from models.contact import Contact
 from datetime import date
 
 

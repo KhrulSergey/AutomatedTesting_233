@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
-from Lesson_2.application import Application
-from Models.group import Group
+from controler.application import Application
+from models.group import Group
+
+__author__ = 'Sergey Khrul'
 
 @pytest.fixture
 def app(request):
@@ -12,15 +14,16 @@ def app(request):
 
 def test_add_new_group(app):
     # success = True
-    app.login(user_name="admin", password="secret")
+    app.session.login(user_name="admin", password="secret")
     app.create_group(Group(name="test group", header="New Test Header", footer="New group footer"))
-    app.logout()
+    app.session.logout()
     # self.assertTrue(success)
 
 
 def test_add_null_group(app):
     # success = True
-    app.login(user_name="admin", password="secret")
+    app.session.login(user_name="admin", password="secret")
     app.create_group(Group(name="", header="", footer=""))
-    app.logout()
+    app.session.logout()
     # self.assertTrue(success)
+
