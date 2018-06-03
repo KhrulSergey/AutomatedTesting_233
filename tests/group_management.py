@@ -15,7 +15,7 @@ def app(request):
 def test_add_new_group(app):
     # success = True
     app.session.login(user_name="admin", password="secret")
-    app.create_group(Group(name="test group", header="New Test Header", footer="New group footer"))
+    app.group.create(Group(name="test group", header="New Test Header", footer="New group footer"))
     app.session.logout()
     # self.assertTrue(success)
 
@@ -23,7 +23,7 @@ def test_add_new_group(app):
 def test_add_null_group(app):
     # success = True
     app.session.login(user_name="admin", password="secret")
-    app.create_group(Group(name="", header="", footer=""))
+    app.group.create(Group(name="", header="", footer=""))
     app.session.logout()
     # self.assertTrue(success)
 
