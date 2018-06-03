@@ -4,6 +4,7 @@ import unittest
 from Models.contact import Contact
 from datetime import date
 
+
 def is_alert_present(wd):
     try:
         wd.switch_to_alert().text
@@ -11,7 +12,8 @@ def is_alert_present(wd):
     except:
         return False
 
-class test_add_contact(unittest.TestCase):
+
+class ContactsManagement(unittest.TestCase):
     def setUp(self):
         self.wd = WebDriver(capabilities={"marionette": False})
         self.wd.implicitly_wait(60)
@@ -121,7 +123,6 @@ class test_add_contact(unittest.TestCase):
         b_day = (contact.birth_date.day + 2).__str__()
         b_month = (contact.birth_date.month + 1).__str__()
         b_year = contact.birth_date.year.__int__()
-        print(b_day,b_month)
         if not wd.find_element_by_xpath("//div[@id='content']/form/select[1]//option[" + b_day + "]").is_selected():
             wd.find_element_by_xpath("//div[@id='content']/form/select[1]//option[" + b_day + "]").click()
         if not wd.find_element_by_xpath("//div[@id='content']/form/select[2]//option[" + b_month + "]").is_selected():
@@ -133,7 +134,6 @@ class test_add_contact(unittest.TestCase):
         a_day = (contact.anniversary_date.day + 2).__str__()
         a_month = (contact.anniversary_date.month + 1).__str__()
         a_year = contact.anniversary_date.year.__int__()
-        print(a_day, a_month)
         if not wd.find_element_by_xpath("//div[@id='content']/form/select[3]//option[" + a_day + "]").is_selected():
             wd.find_element_by_xpath("//div[@id='content']/form/select[3]//option[" + a_day + "]").click()
         if not wd.find_element_by_xpath("//div[@id='content']/form/select[4]//option[" + a_month + "]").is_selected():
@@ -161,6 +161,7 @@ class test_add_contact(unittest.TestCase):
 
     def tearDown(self):
         self.wd.quit()
+
 
 if __name__ == '__main__':
     unittest.main()
