@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.firefox.webdriver import WebDriver
-from controler.session import SessionHelper
-from controler.group import GroupHelper
-from controler.contact import ContactHelper
-from controler.navigation import NavigationHelper
+from controller.session import SessionHelper
+from controller.group import GroupHelper
+from controller.contact import ContactHelper
+from controller.navigation import NavigationHelper
 
 __author__ = 'Sergey Khrul'
 

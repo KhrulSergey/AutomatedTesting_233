@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
-import pytest
-from controler.application import Application
 from models.contact import Contact
 from datetime import date
 
 __author__ = 'Sergey Khrul'
 
 
-@pytest.fixture
-def app(request):
-    fixture = Application()
-    request.addfinalizer(fixture.destroy)
-    return fixture
-
-
-def test_add_new_contact(app: Application):
+def test_add_new_contact(app):
     # success = True
     app.session.login(user_name="admin", password="secret")
     new_contact = Contact(

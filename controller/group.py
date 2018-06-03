@@ -1,5 +1,4 @@
 
-
 __author__ = 'Sergey Khrul'
 
 class GroupHelper:
@@ -25,6 +24,17 @@ class GroupHelper:
         wd.find_element_by_name("group_footer").send_keys(group.footer)
         # Submit group creation
         wd.find_element_by_name("submit").click()
+        # Return to page
+        self.return_to_groups_page()
+
+    def delete_first(self):
+        wd = self.app.wd
+        # Open group page
+        self.open_groups_page()
+        # choose 1st group
+        wd.find_element_by_name("selected[]").click()
+        # submit deletion
+        wd.find_element_by_name("delete").click()
         # Return to page
         self.return_to_groups_page()
 
