@@ -21,6 +21,14 @@ def test_add_null_group(app):
     # self.assertTrue(success)
 
 
+def test_edit_group(app):
+    group_to_edit = Group(name="test group")
+    group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
+    app.session.login(user_name="admin", password="secret")
+    app.group_page.edit(group_to_edit, group_modified)
+    app.session.logout()
+
+
 def test_del_first_group(app):
     app.session.login(user_name="admin", password="secret")
     app.group_page.delete_first()
@@ -32,14 +40,3 @@ def test_del_group(app):
     app.session.login(user_name="admin", password="secret")
     app.group_page.delete(group_to_delete)
     app.session.logout()
-
-
-def test_edit_group(app):
-    group_to_edit = Group(name="test group")
-    group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
-    app.session.login(user_name="admin", password="secret")
-    app.group_page.edit(group_to_edit, group_modified)
-    app.session.logout()
-
-
-
