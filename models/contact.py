@@ -4,10 +4,10 @@ from datetime import date
 
 
 class Contact:
-    def __init__(self, first_name="", middle_name="", last_name="", nickname="", title="", company="", address="",
-                 home_phone="", mobile_phone="", work_phone="", fax_phone="", email="", email2="", email3="",
-                 homepage="", birth_date=date(1900, 1, 1), anniversary_date=date(1900, 2, 2), group_name="",
-                 address2="", phone2="", notes=""):
+    def __init__(self, first_name=None, middle_name=None, last_name=None, nickname=None, title=None, company=None, address=None,
+                 home_phone=None, mobile_phone=None, work_phone=None, fax_phone=None, email=None, email2=None, email3=None,
+                 homepage=None, birth_date=date.min, anniversary_date=date.min, group_name=None,
+                 address2=None, phone2=None, notes=None):
         self.first_name = first_name
         self.middle_name = middle_name
         self.last_name = last_name

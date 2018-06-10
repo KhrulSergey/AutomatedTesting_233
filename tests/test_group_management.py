@@ -7,36 +7,39 @@ __author__ = 'Sergey Khrul'
 
 def test_add_new_group(app):
     # success = True
-    app.session.login(user_name="admin", password="secret")
     app.group_page.create(Group(name="test group", header="New Test Header", footer="New group footer"))
-    app.session.logout()
     # self.assertTrue(success)
 
 
 def test_add_null_group(app):
     # success = True
-    app.session.login(user_name="admin", password="secret")
     app.group_page.create(Group())
-    app.session.logout()
     # self.assertTrue(success)
 
 
 def test_edit_group(app):
     group_to_edit = Group(name="test group")
-    group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
-    app.session.login(user_name="admin", password="secret")
+    if app.group_page.count() == 0:
+        app.group_page.create(group_to_edit)
+    # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
+    group_modified = Group(name="Modified Group")
     app.group_page.edit(group_to_edit, group_modified)
-    app.session.logout()
+
+
+def test_edit_first_group(app):
+    # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
+    if app.group_page.count() == 0:
+        app.group_page.create(Group(name="test"))
+    group_modified = Group(name="New Group")
+    app.group_page.edit_first(group_modified)
 
 
 def test_del_first_group(app):
-    app.session.login(user_name="admin", password="secret")
+    if app.group_page.count() == 0:
+        app.group_page.create(Group(name="test"))
     app.group_page.delete_first()
-    app.session.logout()
 
 
 def test_del_group(app):
-    group_to_delete = Group(name="test group")
-    app.session.login(user_name="admin", password="secret")
+    group_to_delete = Group(name="New Group")
     app.group_page.delete(group_to_delete)
-    app.session.logout()
