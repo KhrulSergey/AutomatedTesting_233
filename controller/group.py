@@ -1,6 +1,6 @@
 from models.group import Group
 from selenium.webdriver.firefox.webdriver import WebDriver
-
+from selenium.webdriver.common.by import By
 __author__ = 'Sergey Khrul'
 
 
@@ -76,8 +76,11 @@ class GroupHelper:
 
     def open_groups_page(self):
         wd = self.app.wd
-        # Open Group page
-        wd.find_element_by_link_text("groups").click()
+        group_url = self.app.mainURL + self.app.groupPathURL
+        key_element = wd.find_elements(By.NAME, 'new')
+        if wd.current_url is not group_url and len(key_element) == 0:
+            # Open Group page
+            wd.find_element_by_link_text("groups").click()
 
     def count(self):
         wd = self.app.wd
@@ -97,6 +100,7 @@ class GroupHelper:
         self._change_field_value_(locator="group_header", field_value=group.header)
         self._change_field_value_(locator="group_footer", field_value=group.footer)
 
+    # TODO create additional class for helpers
     def _change_field_value_(self, locator, field_value):
         wd = self.app.wd
         if field_value is not None:

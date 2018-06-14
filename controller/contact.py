@@ -65,12 +65,14 @@ class ContactHelper:
 
     def open_contacts_page(self):
         wd = self.app.wd
-        # Open Group page
-        wd.find_element_by_link_text("home").click()
+        contact_url = self.app.mainURL + self.app.contactPathURL
+        if self.wd.current_url is not contact_url:
+            # Open Contact page
+            wd.find_element_by_link_text("home").click()
 
     def count(self):
         wd = self.app.wd
-        self.self.open_contacts_page()
+        self.open_contacts_page()
         # Select all contacts
         contact_list = wd.find_elements_by_name("selected[]")
         return len(contact_list)
@@ -138,6 +140,7 @@ class ContactHelper:
         self._change_field_value_(By.NAME, "phone2", contact.homepage)
         self._change_field_value_(By.NAME, "notes", contact.notes)
 
+    # TODO create additional class for helpers
     def _change_field_value_(self, locator_by: By, locator_value, field_value):
         wd = self.app.wd
         if field_value is not None:

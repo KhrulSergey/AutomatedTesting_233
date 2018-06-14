@@ -19,6 +19,7 @@ def test_add_null_group(app):
 
 def test_edit_group(app):
     group_to_edit = Group(name="test group")
+    # TODO check if definite group exist. Not count
     if app.group_page.count() == 0:
         app.group_page.create(group_to_edit)
     # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")

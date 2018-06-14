@@ -1,7 +1,5 @@
 __author__ = 'Sergey Khrul'
 
-URL = "http://localhost:90/addressbook/"
-
 
 class NavigationHelper:
 
@@ -11,12 +9,11 @@ class NavigationHelper:
     def open_home_page(self):
         wd = self.app.wd
         # open home_phone page
-        # TODO Check if the page is opened
-        wd.get(URL)
+        wd.get(self.app.mainURL)
 
     def ensure_home_opened(self):
         wd = self.app.wd
         # open home_phone page
-        # TODO Check if the page is opened
-        if wd.current_url is not URL:
+        # TODO Check if the browser is opened
+        if wd.current_url is not self.app.mainURL:
             self.open_home_page()

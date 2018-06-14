@@ -46,6 +46,7 @@ def test_modify_contact(app):
     contact_to_modify = Contact(
         first_name="first_name",
         last_name="last_name",)
+    # TODO check if definite contact exist. Not count
     if app.contact_page.count() == 0:
         app.contact_page.create(contact_to_modify)
     new_contact = Contact(

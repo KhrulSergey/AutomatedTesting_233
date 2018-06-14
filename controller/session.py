@@ -11,16 +11,18 @@ class SessionHelper:
         self.app = app
 
     def login(self, user_name, password):
-        # TODO Check if the page is opened
         wd = self.app.wd
+        # Check if the page is opened
         self.app.navigation.ensure_home_opened()
         # Login to system
-        wd.find_element_by_name("user").click()
-        wd.find_element_by_name("user").clear()
-        wd.find_element_by_name("user").send_keys(user_name)
-        wd.find_element_by_name("pass").click()
-        wd.find_element_by_name("pass").clear()
-        wd.find_element_by_name("pass").send_keys(password)
+        user_field = wd.find_element_by_name("user")
+        user_field.click()
+        user_field.clear()
+        user_field.send_keys(user_name)
+        pass_field = wd.find_element_by_name("pass")
+        pass_field.click()
+        pass_field.clear()
+        pass_field.send_keys(password)
         wd.find_element_by_xpath("//form[@id='LoginForm']/input[3]").click()
 
     def ensure_login(self, user_name, password):
