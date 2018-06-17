@@ -9,6 +9,18 @@ class GroupHelper:
     def __init__(self, app):
         self.app = app
 
+    def get_list(self):
+        wd = self.app.wd
+        # Open page
+        self.open_groups_page()
+        groups_list = []
+        list_of_groups_name = wd.find_elements(By.CSS_SELECTOR, "span.group")
+        for element in list_of_groups_name:
+            group_name = element.text if element.text else None  # check if '' then it should be None
+            group_id = element.find_element(By.NAME, "selected[]").get_attribute('value')
+            groups_list.append(Group(name=group_name, _id=group_id))
+        return groups_list
+
     def create(self, group: Group):
         wd = self.app.wd
         # Open page
