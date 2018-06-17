@@ -7,7 +7,7 @@ __author__ = 'Sergey Khrul'
 
 
 def test_add_new_group(app):
-    # Get list og existing groups
+    # Get list of existing groups
     old_groups_list = app.group_page.get_list()
     new_group = Group(name="test group", header="New Test Header", footer="New group footer")
     # Add new group to WEB
@@ -34,22 +34,22 @@ def test_add_null_group(app):
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
-def test_edit_group(app):
+def test_modify_group(app):
     # Get list of existing groups
     old_groups_list = app.group_page.get_list()
-    group_to_edit = Group(name="test group")
+    group_to_modify = Group(name="test group")
     # Check if certain group exist in list
-    if group_to_edit not in old_groups_list:
-        app.group_page.create(group_to_edit)  # if not then we create new group
+    if group_to_modify not in old_groups_list:
+        app.group_page.create(group_to_modify)  # if not then we create new group
         old_groups_list = app.group_page.get_list()
     # Find certain group in list
-    modified_group_index = old_groups_list.index(group_to_edit)
-    group_to_edit.id = old_groups_list[modified_group_index].id
+    modified_group_index = old_groups_list.index(group_to_modify)
+    group_to_modify.id = old_groups_list[modified_group_index].id
     # Determinate fields to modify
     # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
-    group_modified = Group(name="Modified Group", _id=group_to_edit.id)  # at least name
+    group_modified = Group(name="Modified Group", _id=group_to_modify.id)  # at least name
     # Modify group in WEB
-    app.group_page.edit(group_to_edit, group_modified)
+    app.group_page.edit(group_to_modify, group_modified)
 
     # Get updated group list
     new_groups_list = app.group_page.get_list()
@@ -60,19 +60,19 @@ def test_edit_group(app):
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
-def test_edit_first_group(app):
+def test_modify_first_group(app):
     # Get list og existing groups
     old_groups_list = app.group_page.get_list()
-    group_to_edit = Group(name="! test")
+    group_to_modify = Group(name="! test")
     # Check if there is any group exist in list
     if len(old_groups_list) == 0:
         app.group_page.create(Group(name="! test"))
 
     # Find certain group in list
-    group_to_edit.id = old_groups_list[0].id
+    group_to_modify.id = old_groups_list[0].id
     # Determinate fields to modify
     # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
-    group_modified = Group(name="Modified Group", _id=group_to_edit.id)  # at least name
+    group_modified = Group(name="Modified Group", _id=group_to_modify.id)  # at least name
     # Modify group in WEB
     app.group_page.edit_first(group_modified)
 
@@ -110,6 +110,7 @@ def test_del_group(app):
     # Find certain group in list
     group_to_delete_index = groups_list.index(group_to_delete)
     group_to_delete.id = groups_list[group_to_delete_index].id
+    # Save length of contact list
     group_len_old = len(groups_list)
     #  Delete certain group from list
     app.group_page.delete(group_to_delete)

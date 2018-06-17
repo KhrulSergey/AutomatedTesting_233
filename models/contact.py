@@ -1,13 +1,17 @@
+from datetime import date
+from sys import maxsize
+
 __author__ = 'Sergey Khrul'
 
-from datetime import date
+CONTACT_PRINT_FORMAT = "{id} - Full Name: {f_name} {l_name}."
 
 
 class Contact:
-    def __init__(self, first_name=None, middle_name=None, last_name=None, nickname=None, title=None, company=None, address=None,
+    def __init__(self, _id=None, first_name=None, middle_name=None, last_name=None, nickname=None, title=None, company=None, address=None,
                  home_phone=None, mobile_phone=None, work_phone=None, fax_phone=None, email=None, email2=None, email3=None,
                  homepage=None, birth_date=date.min, anniversary_date=date.min, group_name=None,
                  address2=None, phone2=None, notes=None):
+        self.id = _id
         self.first_name = first_name
         self.middle_name = middle_name
         self.last_name = last_name
@@ -29,3 +33,16 @@ class Contact:
         self.address2 = address2
         self.phone2 = phone2
         self.notes = notes
+
+    def __repr__(self):
+        return CONTACT_PRINT_FORMAT.format(id=self.id, f_name=self.first_name, l_name=self.last_name)
+
+    def __eq__(self, other):
+        return self.first_name == other.first_name and self.last_name == other.last_name and \
+               (self.id is None or other.id is None or self.id == other.id)
+
+    def id_or_max(cntct):
+        if cntct.id:
+            return int(cntct.id)
+        return maxsize
+

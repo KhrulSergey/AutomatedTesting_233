@@ -12,6 +12,32 @@ class ContactHelper:
     def __init__(self, app):
         self.app = app
 
+    def get_list(self):
+        wd = self.app.wd
+        # Open page
+        self.open_contacts_page()
+        contacts_list = []
+        # TODO check if it can be optimized
+        # find contact table
+        table = wd.find_element(By.ID, 'maintable')
+        contact_entity_list = table.find_elements(By.CSS_SELECTOR, 'tr'
+                                                  )
+        # pass Headers of Table
+        for element in contact_entity_list[1:]:
+            # find list of contacts
+            contact_fields = element.find_elements(By.CSS_SELECTOR, 'td')
+            contact_lname = contact_fname = contact_address = None
+            if contact_fields:
+                # find and save fields of contact
+                # check for each if '' then it should be None
+                contact_lname = contact_fields[1].text if contact_fields[1].text else None
+                contact_fname = contact_fields[2].text if contact_fields[2].text else None
+            # find ID of contact
+            contact_id = contact_fields[0].find_element(By.NAME, "selected[]").get_attribute('value')
+            contacts_list.append(Contact(_id=contact_id, first_name=contact_fname,
+                                         last_name=contact_lname, address=contact_address))
+        return contacts_list
+
     def create(self, contact):
         wd = self.app.wd
         self.open_contacts_page()
@@ -66,7 +92,7 @@ class ContactHelper:
     def open_contacts_page(self):
         wd = self.app.wd
         contact_url = self.app.mainURL + self.app.contactPathURL
-        if self.wd.current_url is not contact_url:
+        if wd.current_url is not contact_url:
             # Open Contact page
             wd.find_element_by_link_text("home").click()
 
@@ -132,6 +158,7 @@ class ContactHelper:
 
         # Select group of contact.
         if not is_edit:
+            # Get list of existed groups
             self._change_select_value_(By.XPATH, "//div[@id='content']/form/select[5]", contact.group_name)
 
         # Fill address fields
