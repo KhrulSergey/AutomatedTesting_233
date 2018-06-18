@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from models.group import Group
+from random import randrange
 
 
 __author__ = 'Sergey Khrul'
@@ -12,11 +13,12 @@ def test_add_new_group(app):
     new_group = Group(name="test group", header="New Test Header", footer="New group footer")
     # Add new group to WEB
     app.group_page.create(new_group)
+
+    # Assert result
+    assert len(old_groups_list) + 1 == app.group_page.count()  # additional assert for list length in case of exception
+    old_groups_list.append(new_group)
     # Get new list from WEB
     new_groups_list = app.group_page.get_list()
-
-    assert len(old_groups_list) + 1 == len(new_groups_list)  # additional assert for list length in case of exception
-    old_groups_list.append(new_group)
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
@@ -26,11 +28,12 @@ def test_add_null_group(app):
     new_group = Group()
     # Add new group to WEB
     app.group_page.create(new_group)
+
+    # Assert result
+    assert len(old_groups_list) + 1 == app.group_page.count()  # additional assert for list length in case of exception
+    old_groups_list.append(new_group)
     # Get new list from WEB
     new_groups_list = app.group_page.get_list()
-
-    assert len(old_groups_list) + 1 == len(new_groups_list)  # additional assert for list length in case of exception
-    old_groups_list.append(new_group)
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
@@ -51,16 +54,16 @@ def test_modify_group(app):
     # Modify group in WEB
     app.group_page.edit(group_to_modify, group_modified)
 
+    # Assert result
+    assert len(old_groups_list) == app.group_page.count()  # additional assert for list length in case of exception
     # Get updated group list
     new_groups_list = app.group_page.get_list()
     # Change modified group in old list
     old_groups_list[modified_group_index] = group_modified
-
-    # Assert result
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
-def test_modify_first_group(app):
+def test_modify_some_group(app):
     # Get list og existing groups
     old_groups_list = app.group_page.get_list()
     group_to_modify = Group(name="! test")
@@ -68,34 +71,39 @@ def test_modify_first_group(app):
     if len(old_groups_list) == 0:
         app.group_page.create(Group(name="! test"))
 
+    # Generate index to modify
+    index = randrange(len(old_groups_list))
     # Find certain group in list
-    group_to_modify.id = old_groups_list[0].id
+    group_to_modify.id = old_groups_list[index].id
     # Determinate fields to modify
     # group_modified = Group(name="Modified Group", footer="Modified footer", header="Modified header")
     group_modified = Group(name="Modified Group", _id=group_to_modify.id)  # at least name
     # Modify group in WEB
-    app.group_page.edit_first(group_modified)
+    app.group_page.modify_by_index(index, group_modified)
 
+    # Assert result
+    assert len(old_groups_list) == app.group_page.count()  # additional assert for list length in case of exception
     # Get updated group list
     new_groups_list = app.group_page.get_list()
     # Change modified group in old list
-    old_groups_list[0] = group_modified
-
-    # Assert result
+    old_groups_list[index] = group_modified
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
 
 
-def test_del_first_group(app):
+def test_del_some_group(app):
     # Here is a teacher's code. I'd rather modified it, but for education purpose..let it be
     if app.group_page.count() == 0:
         app.group_page.create(Group(name="test"))
-
     old_groups_list = app.group_page.get_list()
-    app.group_page.delete_first()
-    new_groups_list = app.group_page.get_list()
+    index = randrange(len(old_groups_list))
+    #  Delete some group from list
+    app.group_page.delete_by_index(index)
 
-    assert len(old_groups_list) - 1 == len(new_groups_list)
-    old_groups_list[0:1] = []
+    # Assert result
+    assert len(old_groups_list) - 1 == app.group_page.count()  # additional assert for list length in case of exception
+    # Get updated group list
+    new_groups_list = app.group_page.get_list()
+    old_groups_list[index:index+1] = []
     assert old_groups_list == new_groups_list
 
 
@@ -110,13 +118,11 @@ def test_del_group(app):
     # Find certain group in list
     group_to_delete_index = groups_list.index(group_to_delete)
     group_to_delete.id = groups_list[group_to_delete_index].id
-    # Save length of contact list
-    group_len_old = len(groups_list)
     #  Delete certain group from list
     app.group_page.delete(group_to_delete)
 
+    # Assert result
+    assert len(groups_list) - 1 == app.group_page.count()  # additional assert for list length in case of exception
     # Get updated group list
     groups_list = app.group_page.get_list()
-
-    assert group_len_old - 1 == len(groups_list)  # check new length of group list
     assert group_to_delete not in groups_list  # check for deleted element existed

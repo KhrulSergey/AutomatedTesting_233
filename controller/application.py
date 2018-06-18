@@ -27,8 +27,8 @@ class Application:
 
     def is_valid(self):
         try:
-            self.wd.current_url
-            return True
+            if self.wd.current_url:
+                return True
         except:
             return False
 

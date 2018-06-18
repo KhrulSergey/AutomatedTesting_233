@@ -12,31 +12,33 @@ class ContactHelper:
     def __init__(self, app):
         self.app = app
 
+    contact_cache = None
+
     def get_list(self):
-        wd = self.app.wd
-        # Open page
-        self.open_contacts_page()
-        contacts_list = []
-        # TODO check if it can be optimized
-        # find contact table
-        table = wd.find_element(By.ID, 'maintable')
-        contact_entity_list = table.find_elements(By.CSS_SELECTOR, 'tr'
-                                                  )
-        # pass Headers of Table
-        for element in contact_entity_list[1:]:
-            # find list of contacts
-            contact_fields = element.find_elements(By.CSS_SELECTOR, 'td')
-            contact_lname = contact_fname = contact_address = None
-            if contact_fields:
-                # find and save fields of contact
-                # check for each if '' then it should be None
-                contact_lname = contact_fields[1].text if contact_fields[1].text else None
-                contact_fname = contact_fields[2].text if contact_fields[2].text else None
-            # find ID of contact
-            contact_id = contact_fields[0].find_element(By.NAME, "selected[]").get_attribute('value')
-            contacts_list.append(Contact(_id=contact_id, first_name=contact_fname,
-                                         last_name=contact_lname, address=contact_address))
-        return contacts_list
+        if self.contact_cache is None:
+            wd = self.app.wd
+            # Open page
+            self.open_contacts_page()
+            self.contact_cache = []
+            # TODO check if it can be optimized
+            # find contact table
+            table = wd.find_element(By.ID, 'maintable')
+            contact_entity_list = table.find_elements(By.CSS_SELECTOR, 'tr')
+            # pass Headers of Table
+            for element in contact_entity_list[1:]:
+                # find list of contacts
+                contact_fields = element.find_elements(By.CSS_SELECTOR, 'td')
+                contact_lname = contact_fname = contact_address = None
+                if contact_fields:
+                    # find and save fields of contact
+                    # check for each if '' then it should be None
+                    contact_lname = contact_fields[1].text if contact_fields[1].text else None
+                    contact_fname = contact_fields[2].text if contact_fields[2].text else None
+                # find ID of contact
+                contact_id = contact_fields[0].find_element(By.NAME, "selected[]").get_attribute('value')
+                self.contact_cache.append(Contact(_id=contact_id, first_name=contact_fname,
+                                             last_name=contact_lname, address=contact_address))
+        return list(self.contact_cache)
 
     def create(self, contact):
         wd = self.app.wd
@@ -48,46 +50,53 @@ class ContactHelper:
         wd.find_element_by_name("submit").click()
         # Return to Contact page
         self.open_contacts_page()
+        self._clear_cache_()
 
     def edit(self, original_contacts: Contact, modified_contacts: Contact):
         wd = self.app.wd
         self.open_contacts_page()
-        # Select contact to modify
-        contact_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" +
-                                                     original_contacts.first_name + " " + original_contacts.last_name + ")'])")
-        # Select button to click
-        wd.find_element(By.CSS_SELECTOR, "a[href*='edit.php?id=" + contact_check_box.get_attribute("id") + "']").click()
+        # TODO check why the code stopped working
+        # # Select contact to modify
+        # contact_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" +
+        #                                              original_contacts.first_name + " " + original_contacts.last_name + ")'])")
+        # # Select button to click
+        # wd.find_element(By.CSS_SELECTOR, "a[href*='edit.php?id=" + contact_check_box.get_attribute("id") + "']").click()
+        wd.find_element(By.CSS_SELECTOR, "a[href*='edit.php?id=" + original_contacts.id + "']").click()
         # Fill all modified fields
         self._fill_field_(modified_contacts, True)
         # Submit modification
         wd.find_element_by_name("update").click()
         # Return to Contact page
         self.open_contacts_page()
+        self._clear_cache_()
 
     def delete(self, contact: Contact):
         wd = self.app.wd
         self.open_contacts_page()
         # Select contact to delete
-        contact_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select ("
-                                                     + contact.first_name + " " + contact.last_name + ")'])")
-        contact_check_box.click()
+        self._select_by_id_(contact.id)  # self._select_by_name_(contact.first_name, contact.last_name)
         # Click delete
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         wd.switch_to_alert().accept()
         # Return to Contact page
         self.open_contacts_page()
+        self._clear_cache_()
 
     def delete_first(self):
+        self.delete_by_index(0)
+
+    def delete_by_index(self, index: int):
         wd = self.app.wd
         self.open_contacts_page()
         # Select contact to modify
-        wd.find_element_by_name("selected[]").click()
-        # Click delete
+        self._select_by_index_(index)
+        # Submit delete
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         # Accept confirmation
         wd.switch_to_alert().accept()
         # Return to Contact page
         self.open_contacts_page()
+        self._clear_cache_()
 
     def open_contacts_page(self):
         wd = self.app.wd
@@ -102,6 +111,21 @@ class ContactHelper:
         # Select all contacts
         contact_list = wd.find_elements_by_name("selected[]")
         return len(contact_list)
+
+    def _clear_cache_(self):
+        self.contact_cache = None
+
+    def _select_by_id_(self, _id: int):
+        wd = self.app.wd
+        wd.find_element(By.XPATH, "(//input[@value='" + str(_id) + "'])").click()
+
+    def _select_by_name_(self, first_name: str, last_name: str):
+        wd = self.app.wd
+        wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" + first_name + " " + last_name + ")'])").click()
+
+    def _select_by_index_(self, index: int):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
 
     def _fill_field_(self, contact: Contact, is_edit=False):
         wd = self.app.wd
