@@ -55,12 +55,14 @@ class ContactHelper:
     def edit(self, original_contacts: Contact, modified_contacts: Contact):
         wd = self.app.wd
         self.open_contacts_page()
+
         # TODO check why the code stopped working
         # # Select contact to modify
         # contact_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" +
         #                                              original_contacts.first_name + " " + original_contacts.last_name + ")'])")
         # # Select button to click
         # wd.find_element(By.CSS_SELECTOR, "a[href*='edit.php?id=" + contact_check_box.get_attribute("id") + "']").click()
+
         wd.find_element(By.CSS_SELECTOR, "a[href*='edit.php?id=" + original_contacts.id + "']").click()
         # Fill all modified fields
         self._fill_field_(modified_contacts, True)
