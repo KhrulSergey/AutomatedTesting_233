@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from models.group import Group
-from random import randrange
+
+
 
 
 __author__ = 'Sergey Khrul'
