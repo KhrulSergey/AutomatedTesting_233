@@ -42,8 +42,8 @@ class GroupHelper:
         # Open group page
         self.open_groups_page()
         # choose group with required name
-        group_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" +
-                                                   original_group.name + ")'])")
+        group_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' "
+                                                   "and @title='Select ({grp_name})'])".format(grp_name=original_group.name))
         group_check_box.click()
         # submit deletion
         wd.find_element_by_name("edit").click()
@@ -117,11 +117,12 @@ class GroupHelper:
     def _select_by_id_(self, _id: int):
         # choose group with ID = _id
         wd = self.app.wd
-        wd.find_element(By.XPATH, "(//input[@value='" + str(_id) + "'])").click()
+        wd.find_element(By.XPATH, "(//input[@value='{id}'])".format(id=_id)).click()
 
     def _select_by_name(self, name: str):
         wd = self.app.wd
-        group_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' and @title='Select (" + name + ")'])")
+        group_check_box = wd.find_element_by_xpath("(//input[@name='selected[]' "
+                                                   "and @title='Select ({user})])".format(user=name))
         group_check_box.click()
 
     def _select_by_index_(self, index: int):
@@ -133,7 +134,7 @@ class GroupHelper:
         # Fill group fields
         self._change_field_value_(locator="group_name", field_value=group.name)
         self._change_field_value_(locator="group_header", field_value=group.header)
-        self._change_field_value_(locator="group_footer", field_value=group.footer)\
+        self._change_field_value_(locator="group_footer", field_value=group.footer)
 
     def _clear_cache_(self):
         self.group_cache = None

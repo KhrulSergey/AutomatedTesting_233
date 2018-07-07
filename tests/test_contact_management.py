@@ -2,14 +2,12 @@
 from models.contact import Contact
 from datetime import date
 from random import randrange
+import re
 
 __author__ = 'Sergey Khrul'
 
 
-def test_add_new_contact(app):
-    # Get list of existing contacts
-    old_contact_list = app.contact_page.get_list()
-    new_contact = Contact(
+FULLCONTACT  = new_contact = Contact(
         first_name="first_name",
         middle_name="middle_name",
         last_name="last_name",
@@ -30,8 +28,14 @@ def test_add_new_contact(app):
         # group_name="Modified Group",
         address2="address2",
         phone2="phone2",
-        notes="notes"
-    )
+        notes="notes",
+)
+
+
+def test_add_new_contact(app):
+    # Get list of existing contacts
+    old_contact_list = app.contact_page.get_list()
+    new_contact = FULLCONTACT
     # Add new group to WEB
     app.contact_page.create(new_contact)
 
@@ -118,12 +122,13 @@ def test_delete_contact(app):
 
 def test_delete_some_contact(app):
     # Get list of existing contacts
-    contacts_list = app.contact_page.get_list()
     contact_to_delete = Contact(first_name="first_name1", last_name="last_name1")
-    if len(contacts_list) == 0:
+    contacts_list_len = app.contact_page.count()
+    # Check the lenght of contact list
+    if contacts_list_len == 0:
         app.contact_page.create(contact_to_delete)
-        contacts_list = app.contact_page.get_list()
 
+    contacts_list = app.contact_page.get_list()
     index = randrange(len(contacts_list))
     # Find first contact in list and save its ID
     contact_to_delete.id = contacts_list[index].id
@@ -137,3 +142,48 @@ def test_delete_some_contact(app):
     # Get updated contacts list
     contacts_list = app.contact_page.get_list()
     assert contact_to_delete not in contacts_list  # check for deleted element existed
+
+
+def test_check_phones_on_home_page_by_index(app):
+    # Define index of check
+    contact_index_to_check = 0
+    contacts_list_len = app.contact_page.count()
+
+    # Check the length of contact list
+    while contacts_list_len < contact_index_to_check:
+        app.contact_page.create(FULLCONTACT)
+        contacts_list_len = app.contact_page.count()
+
+    # Get list of existing contacts
+    contact_from_home_page = (app.contact_page.get_list())[contact_index_to_check]
+    contact_from_edit_page = app.contact_page.get_info_from_edit_page(contact_index_to_check)
+
+    # Check fields
+    assert clear_phone_num(contact_from_edit_page.work_phone) == clear_phone_num(contact_from_home_page.work_phone)
+    assert clear_phone_num(contact_from_edit_page.home_phone) == clear_phone_num(contact_from_home_page.home_phone)
+    assert clear_phone_num(contact_from_edit_page.mobile_phone) == clear_phone_num(contact_from_home_page.mobile_phone)
+    assert clear_phone_num(contact_from_edit_page.phone2) == clear_phone_num(contact_from_home_page.phone2)
+
+
+def test_check_phones_on_contact_view_page(app):
+    # Define index of check
+    contact_index_to_check = 0
+    contacts_list_len = app.contact_page.count()
+
+    # Check the length of contact list
+    while contacts_list_len < contact_index_to_check:
+        app.contact_page.create(FULLCONTACT)
+        contacts_list_len = app.contact_page.count()
+
+    # Get list of existing contacts
+    contact_from_view_page = app.contact_page.get_info_from_view_page(contact_index_to_check)
+    contact_from_edit_page = app.contact_page.get_info_from_edit_page(contact_index_to_check)
+    # Check fields
+    assert contact_from_edit_page.work_phone == contact_from_view_page.work_phone
+    assert contact_from_edit_page.home_phone == contact_from_view_page.home_phone
+    assert contact_from_edit_page.mobile_phone == contact_from_view_page.mobile_phone
+    assert contact_from_edit_page.phone2 == contact_from_view_page.phone2
+
+
+def clear_phone_num(phone_num):
+    return re.sub("[(),-. +]", "", phone_num)
