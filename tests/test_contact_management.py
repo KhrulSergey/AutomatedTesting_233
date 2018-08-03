@@ -160,8 +160,7 @@ def test_check_phones_on_home_page_by_index(app):
 
     # Merge all phone in one text element with RegExp and Join+Filter func
     all_phones = merge_phones_like_on_home_page(contact_from_edit_page)
-    print('\n', all_phones)
-    print(contact_from_home_page.all_phones_from_home_page)
+
     # Check fields
     assert all_phones == contact_from_home_page.all_phones_from_home_page
 
@@ -186,6 +185,35 @@ def test_check_phones_on_contact_view_page(app):
     assert contact_from_edit_page.phone2 == contact_from_view_page.phone2
 
 
+def test_all_fields_on_home_page_by_index(app):
+    # Define index of check
+    contact_index_to_check = 0
+    contacts_list_len = app.contact_page.count()
+
+    # Check the length of contact list
+    while contacts_list_len <= contact_index_to_check:
+        app.contact_page.create(FULLCONTACT)
+        contacts_list_len = app.contact_page.count()
+
+    # Get list of existing contacts
+    contact_from_home_page = (app.contact_page.get_list())[contact_index_to_check]
+    contact_from_edit_page = app.contact_page.get_info_from_edit_page(contact_index_to_check)
+
+    # Merge all phone in one text element with RegExp and Join+Filter func
+    all_phones = merge_phones_like_on_home_page(contact_from_edit_page)
+    # Merge all email in one text element with RegExp and Join+Filter func
+    all_email = merge_email_like_on_home_page(contact_from_edit_page)
+
+    # Check fields
+    assert all_phones == contact_from_home_page.all_phones_from_home_page
+    # Check fields
+    assert all_email == contact_from_home_page.all_email_from_home_page
+    # Check fields
+    assert contact_from_edit_page.address == contact_from_home_page.full_address_from_home_page
+    # Check fields
+    assert contact_from_edit_page.first_name == contact_from_home_page.first_name
+    assert contact_from_edit_page.last_name == contact_from_home_page.last_name
+
 def clear_phone_num(phone_num):
     return re.sub("[(),-. ]", "", phone_num)
 
@@ -197,3 +225,7 @@ def merge_phones_like_on_home_page(contact: Contact):
                                                                        contact.mobile_phone, contact.work_phone,
                                                                        contact.phone2]))))
     return all_phones
+
+def merge_email_like_on_home_page(contact: Contact):
+    all_email = "\n".join([contact.email, contact.email2, contact.email3])
+    return all_email

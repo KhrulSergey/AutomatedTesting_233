@@ -10,10 +10,11 @@ CONTACT_PRINT_FORMAT = "{id} - Full Name: {f_name} {l_name}."
 
 
 class Contact:
-    def __init__(self, _id=None, first_name=None, middle_name=None, last_name=None, nickname=None, title=None, company=None, address=None,
-                 home_phone=None, mobile_phone=None, work_phone=None, fax_phone=None, email=None, email2=None, email3=None,
-                 homepage=None, birth_date=date.min, anniversary_date=date.min, group_name=None,
-                 address2=None, phone2=None, notes=None, all_phones_from_home_page=None):
+    def __init__(self, _id=None, first_name=None, middle_name=None, last_name=None, nickname=None, title=None,
+                 company=None, address=None, home_phone=None, mobile_phone=None, work_phone=None, fax_phone=None,
+                 email=None, email2=None, email3=None, homepage=None, birth_date=date.min, anniversary_date=date.min,
+                 group_name=None, address2=None, phone2=None, notes=None, all_phones_from_home_page=None,
+                 full_address_from_home_page=None, all_email_from_home_page=None):
         self.id = _id
         self.first_name = first_name
         self.middle_name = middle_name
@@ -37,6 +38,9 @@ class Contact:
         self.phone2 = phone2
         self.notes = notes
         self.all_phones_from_home_page = all_phones_from_home_page
+        self.full_address_from_home_page = full_address_from_home_page
+        self.all_email_from_home_page = all_email_from_home_page
+
 
     def __repr__(self):
         return CONTACT_PRINT_FORMAT.format(id=self.id, f_name=self.first_name, l_name=self.last_name)

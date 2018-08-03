@@ -32,20 +32,20 @@ class ContactHelper:
                 # find list of contacts
 
                 contact_fields = element.find_elements(By.CSS_SELECTOR, 'td')
-                contact_lname = contact_fname = contact_address = None
-                all_phones = None
+                contact_lname = contact_fname = None
+                all_phones = full_address = all_email = None
                 contact_home_phone = contact_work_phone = contact_mobile_phone = contact_phone2 = None
                 if contact_fields:
                     # find and save fields of contact
                     # check for each if '' then it should be None
                     contact_lname = contact_fields[1].text if contact_fields[1].text else None
                     contact_fname = contact_fields[2].text if contact_fields[2].text else None
+                    full_address = contact_fields[3].text if contact_fields[3].text else None
+                    all_email = contact_fields[4].text if contact_fields[4].text else None
+                    all_phones = contact_fields[5].text if contact_fields[5] else None
 
-                    # It's not true if not all phone fields added to Contact page
-                    # It's should be deleted or used carefully
-                    if contact_fields[5]:
-                        all_phones = contact_fields[5].text
-
+                        # It's not true if not all phone fields added to Contact page
+                        # It's should be deleted or used carefully
                         # all_phones.splitlines()
                         # if len(all_phones) == 4:
                         #     contact_home_phone = all_phones[0]
@@ -56,7 +56,8 @@ class ContactHelper:
                 # find ID of contact
                 contact_id = contact_fields[0].find_element(By.NAME, "selected[]").get_attribute('value')
                 self.contact_cache.append(Contact(_id=contact_id, first_name=contact_fname, last_name=contact_lname,
-                                                  address=contact_address, all_phones_from_home_page=all_phones))
+                                                  full_address_from_home_page=full_address, all_email_from_home_page=all_email,
+                                                  all_phones_from_home_page=all_phones))
         return list(self.contact_cache)
 
     def create(self, contact):
@@ -143,7 +144,8 @@ class ContactHelper:
         return len(contact_list)
 
     def get_info_from_edit_page(self, index: int):
-        '''Get all data from Edit Form of index'es Contact'''
+        '''Get all data from Edit Form of index'es Contact
+        @:return Contact'''
         wd = self.app.wd
         self._open_edit_page_by_index_(index)
         contact = self._get_fields_from_edit_()
