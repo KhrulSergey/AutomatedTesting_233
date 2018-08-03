@@ -15,10 +15,10 @@ FULLCONTACT  = new_contact = Contact(
         title="title",
         company="company",
         address="address",
-        home_phone="home_phone",
-        mobile_phone="mobile_phone",
-        work_phone="work_phone",
-        fax_phone="fax_phone",
+        home_phone="+783(546)33h",
+        mobile_phone="883(546)33m",
+        work_phone="56-78-23w",
+        fax_phone="56-78-45f",
         email="email",
         email2="email2",
         email3="email3",
@@ -27,7 +27,7 @@ FULLCONTACT  = new_contact = Contact(
         anniversary_date=date(1900, 2, 2),
         # group_name="Modified Group",
         address2="address2",
-        phone2="phone2",
+        phone2="+783-546-332p2",
         notes="notes",
 )
 
@@ -146,11 +146,11 @@ def test_delete_some_contact(app):
 
 def test_check_phones_on_home_page_by_index(app):
     # Define index of check
-    contact_index_to_check = 0
+    contact_index_to_check = 1
     contacts_list_len = app.contact_page.count()
 
     # Check the length of contact list
-    while contacts_list_len < contact_index_to_check:
+    while contacts_list_len <= contact_index_to_check:
         app.contact_page.create(FULLCONTACT)
         contacts_list_len = app.contact_page.count()
 
@@ -158,11 +158,12 @@ def test_check_phones_on_home_page_by_index(app):
     contact_from_home_page = (app.contact_page.get_list())[contact_index_to_check]
     contact_from_edit_page = app.contact_page.get_info_from_edit_page(contact_index_to_check)
 
+    # Merge all phone in one text element with RegExp and Join+Filter func
+    all_phones = merge_phones_like_on_home_page(contact_from_edit_page)
+    print('\n', all_phones)
+    print(contact_from_home_page.all_phones_from_home_page)
     # Check fields
-    assert clear_phone_num(contact_from_edit_page.work_phone) == clear_phone_num(contact_from_home_page.work_phone)
-    assert clear_phone_num(contact_from_edit_page.home_phone) == clear_phone_num(contact_from_home_page.home_phone)
-    assert clear_phone_num(contact_from_edit_page.mobile_phone) == clear_phone_num(contact_from_home_page.mobile_phone)
-    assert clear_phone_num(contact_from_edit_page.phone2) == clear_phone_num(contact_from_home_page.phone2)
+    assert all_phones == contact_from_home_page.all_phones_from_home_page
 
 
 def test_check_phones_on_contact_view_page(app):
@@ -171,7 +172,7 @@ def test_check_phones_on_contact_view_page(app):
     contacts_list_len = app.contact_page.count()
 
     # Check the length of contact list
-    while contacts_list_len < contact_index_to_check:
+    while contacts_list_len <= contact_index_to_check:
         app.contact_page.create(FULLCONTACT)
         contacts_list_len = app.contact_page.count()
 
@@ -186,4 +187,13 @@ def test_check_phones_on_contact_view_page(app):
 
 
 def clear_phone_num(phone_num):
-    return re.sub("[(),-. +]", "", phone_num)
+    return re.sub("[(),-. ]", "", phone_num)
+
+
+def merge_phones_like_on_home_page(contact: Contact):
+    all_phones = "\n".join(filter(lambda x: x != '',  # filter all empty fields and pass all filled
+                                  map(clear_phone_num,  # check all properties in RegEx function
+                                      filter(lambda x: x is not None, [contact.home_phone,  # check for None phones
+                                                                       contact.mobile_phone, contact.work_phone,
+                                                                       contact.phone2]))))
+    return all_phones

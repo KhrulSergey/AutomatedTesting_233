@@ -33,6 +33,7 @@ class ContactHelper:
 
                 contact_fields = element.find_elements(By.CSS_SELECTOR, 'td')
                 contact_lname = contact_fname = contact_address = None
+                all_phones = None
                 contact_home_phone = contact_work_phone = contact_mobile_phone = contact_phone2 = None
                 if contact_fields:
                     # find and save fields of contact
@@ -43,18 +44,19 @@ class ContactHelper:
                     # It's not true if not all phone fields added to Contact page
                     # It's should be deleted or used carefully
                     if contact_fields[5]:
-                        all_phones = contact_fields[5].text.splitlines()
-                        if len(all_phones) == 4:
-                            contact_home_phone = all_phones[0]
-                            contact_mobile_phone = all_phones[1]
-                            contact_work_phone = all_phones[2]
-                            contact_phone2 = all_phones[3]
+                        all_phones = contact_fields[5].text
+
+                        # all_phones.splitlines()
+                        # if len(all_phones) == 4:
+                        #     contact_home_phone = all_phones[0]
+                        #     contact_mobile_phone = all_phones[1]
+                        #     contact_work_phone = all_phones[2]
+                        #     contact_phone2 = all_phones[3]
+
                 # find ID of contact
                 contact_id = contact_fields[0].find_element(By.NAME, "selected[]").get_attribute('value')
                 self.contact_cache.append(Contact(_id=contact_id, first_name=contact_fname, last_name=contact_lname,
-                                                  address=contact_address, home_phone=contact_home_phone,
-                                                  work_phone=contact_work_phone, mobile_phone=contact_mobile_phone,
-                                                  phone2=contact_phone2))
+                                                  address=contact_address, all_phones_from_home_page=all_phones))
         return list(self.contact_cache)
 
     def create(self, contact):
