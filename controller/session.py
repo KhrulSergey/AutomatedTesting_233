@@ -49,7 +49,9 @@ class SessionHelper:
         return len(wd.find_elements(By.LINK_TEXT, "Logout")) > 0
 
     def _is_session_correct_(self, user_name):
-        return self._get_logged_user_() == user_name
+        if self._get_logged_user_() == '127.0.0.1' or self._get_logged_user_() == user_name:
+            return True
+        return False
 
     def _get_logged_user_(self):
         wd = self.app.wd

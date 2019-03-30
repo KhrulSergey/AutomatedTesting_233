@@ -1,0 +1,8 @@
+{
+    "browser": "chrome",
+    "mainURL": "http://localhost/addressbook/",
+    "username": "admin",
+    "password": "secret",
+    "ProdURL": "http://php-addressbook.sourceforge.net/demo/",
+    "DevURL": "http://localhost/addressbook/"
+}

@@ -2,40 +2,26 @@
 
 from models.group import Group
 from random import randrange
+import pytest
+# from data_provider.group_data_provider import test_data
 
-
+from data_provider.group_data_provider import const_data as test_data
 __author__ = 'Sergey Khrul'
 
 
-def test_add_new_group(app):
+@pytest.mark.parametrize("new_group", test_data, ids=[repr(x) for x in test_data])
+def test_add_new_group(app, new_group):
     # Get list of existing groups
     old_groups_list = app.group_page.get_list()
-    new_group = Group(name="test group", header="New Test Header", footer="New group footer")
     # Add new group to WEB
     app.group_page.create(new_group)
-
+    print(new_group)
     # Assert result
     assert len(old_groups_list) + 1 == app.group_page.count()  # additional assert for list length in case of exception
     old_groups_list.append(new_group)
     # Get new list from WEB
     new_groups_list = app.group_page.get_list()
     assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
-
-
-def test_add_null_group(app):
-    # Get list og existing groups
-    old_groups_list = app.group_page.get_list()
-    new_group = Group()
-    # Add new group to WEB
-    app.group_page.create(new_group)
-
-    # Assert result
-    assert len(old_groups_list) + 1 == app.group_page.count()  # additional assert for list length in case of exception
-    old_groups_list.append(new_group)
-    # Get new list from WEB
-    new_groups_list = app.group_page.get_list()
-    assert sorted(old_groups_list, key=Group.id_or_max) == sorted(new_groups_list, key=Group.id_or_max)
-
 
 def test_modify_group(app):
     # Get list of existing groups
@@ -105,6 +91,10 @@ def test_del_some_group(app):
     new_groups_list = app.group_page.get_list()
     old_groups_list[index:index+1] = []
     assert old_groups_list == new_groups_list
+
+def test_del_all_group(app):
+    while app.group_page.count() != 0:
+        app.group_page.delete_by_index(0)
 
 
 def test_del_group(app):
